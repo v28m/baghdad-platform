@@ -14,11 +14,8 @@ ADMIN_ID = int(os.getenv('ADMIN_ID', '0'))
 
 db = Database()
 
-# حالات المحادثة
 (REGISTER_NAME, REGISTER_USERNAME, POST_CONTENT, COMMENT_WRITE,
  VERIFICATION_REASON, SEARCH_USER) = range(6)
-
-# ============ الأزرار ============
 
 def main_menu_keyboard():
     keyboard = [
@@ -67,8 +64,6 @@ def back_keyboard():
     keyboard = [[InlineKeyboardButton("🔙 رجوع للقائمة", callback_data="timeline")]]
     return InlineKeyboardMarkup(keyboard)
 
-# ============ تنسيق ============
-
 def format_post(post, user_id):
     post_id, post_user_id, content, created_at, likes, comments, _, full_name, username, is_verified = post
     verified_badge = " ✅" if is_verified else ""
@@ -110,8 +105,6 @@ def format_profile(user, user_id):
 ━━━━━━━━━━━━━━━━━
 """
     return text
-
-# ============ البداية ============
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
@@ -178,8 +171,6 @@ async def register_username(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
     return ConversationHandler.END
 
-# ============ النشر ============
-
 async def new_post_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
@@ -219,8 +210,6 @@ async def post_content(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
     return ConversationHandler.END
 
-# ============ الرئيسية ============
-
 async def show_timeline(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
@@ -250,8 +239,6 @@ async def show_timeline(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     await query.message.reply_text("📍 هذه هي أحدث المنشورات", reply_markup=main_menu_keyboard())
 
-# ============ الملف الشخصي ============
-
 async def my_profile(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
@@ -268,8 +255,6 @@ async def my_profile(update: Update, context: ContextTypes.DEFAULT_TYPE):
         text,
         reply_markup=profile_keyboard(user_id, user_id)
     )
-
-# ============ اللايكات والتعليقات ============
 
 async def handle_like(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
@@ -335,8 +320,6 @@ async def comment_write(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
     
     return ConversationHandler.END
-
-# ============ البحث والمتابعة ============
 
 async def show_user_posts(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
@@ -411,8 +394,6 @@ async def handle_follow(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = profile_keyboard(user_id, following_id)
     await query.edit_message_text(text, reply_markup=keyboard)
 
-# ============ التوثيق ============
-
 async def request_verify(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
@@ -450,8 +431,6 @@ async def verification_reason(update: Update, context: ContextTypes.DEFAULT_TYPE
     )
     return ConversationHandler.END
 
-# ============ الإشعارات ============
-
 async def show_notifications(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
@@ -474,8 +453,6 @@ async def show_notifications(update: Update, context: ContextTypes.DEFAULT_TYPE)
         parse_mode=ParseMode.MARKDOWN,
         reply_markup=main_menu_keyboard()
     )
-
-# ============ الأدمن ============
 
 async def admin_panel(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
@@ -592,8 +569,6 @@ async def admin_broadcast_send(update: Update, context: ContextTypes.DEFAULT_TYP
     await update.message.reply_text(f"✅ تم الإرسال إلى {count} مستخدم.", reply_markup=admin_keyboard())
     return ConversationHandler.END
 
-# ============ الرجوع ============
-
 async def go_back(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
@@ -609,8 +584,6 @@ async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("❌ تم الإلغاء.", reply_markup=main_menu_keyboard())
     return ConversationHandler.END
 
-# ============ الرسائل العشوائية ============
-
 async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     if db.user_exists(user_id):
@@ -620,8 +593,6 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
     else:
         await update.message.reply_text("🏛️ أهلاً بك! أرسل /start للتسجيل في منصة بغداد.")
-
-# ============ التشغيل ============
 
 def main():
     app = Application.builder().token(TOKEN).build()
@@ -715,9 +686,4 @@ def main():
     app.run_polling(allowed_updates=Update.ALL_TYPES)
 
 if __name__ == '__main__':
-    import sys
-    try:
-        main()
-    except Exception as e:
-        print(f"Error: {e}")
-        sys.exit(1)
+    main()
