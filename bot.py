@@ -682,8 +682,20 @@ def main():
     
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_text))
     
-    print("🏛️ منصة بغداد تعمل...")
-    app.run_polling(allowed_updates=Update.ALL_TYPES)
+    port = int(os.environ.get("PORT", 8080))
+    webhook_url = os.environ.get("RAILWAY_PUBLIC_DOMAIN", "")
+    
+    if webhook_url:
+        print(f"🏛️ منصة بغداد تعمل عبر webhook...")
+        app.run_webhook(
+            listen="0.0.0.0",
+            port=port,
+            webhook_url=f"https://{webhook_url}/webhook",
+            path="/webhook"
+        )
+    else:
+        print("🏛️ منصة بغداد تعمل عبر polling...")
+        app.run_polling(allowed_updates=Update.ALL_TYPES)
 
 if __name__ == '__main__':
     main()
